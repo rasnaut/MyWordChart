@@ -15,6 +15,9 @@
 
 QT_CHARTS_USE_NAMESPACE
 
+WordCounter wordCounterCreator(QString str) {
+    return WordCounter(str);
+}
 
 int main(int argc, char *argv[])
 {
