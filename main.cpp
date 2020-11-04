@@ -1,34 +1,26 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
-#include <QtCharts/QChartView>
-#include <QtCharts/QBarSeries>
-#include <QtCharts/QBarSet>
-#include <QtCharts/QLegend>
-#include <QtCharts/QBarCategoryAxis>
-#include <QtCharts/QValueAxis>
-#include <QtConcurrent/QtConcurrent>
-#include <QFuture>
-#include <QList>
-#include <QFileDialog>
+
+#include <QtGui/QSurfaceFormat>
+#include <QtQuick/QQuickWindow>
+#include <QtQuick/QQuickView>
+#include <QtQml/QQmlEngine>
 
 #include "wordcounter.h"
 
-QT_CHARTS_USE_NAMESPACE
-
-WordCounter wordCounterCreator(QString str) {
-    return WordCounter(str);
-}
-
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    QMainWindow window;
+    QApplication app(argc, argv);
 
-    window.resize(420, 300);
-    window.show();
+    QQuickView viewer(QUrl("qrc:/MainWindow.qml"));
+    //QObject *item = view.rootObject();
 
-    QString fileName = QFileDialog::getOpenFileName(&window,
-        "Open Text File", "/home/", "Text Files (*.txt)");
+    //QObject::connect(viewer.engine(), &QQmlEngine::quit, &viewer, &QWindow::close);
+
+    viewer.setTitle(QStringLiteral("QML Chart"));
+
+    viewer.show();
+/*
 
     QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -58,12 +50,7 @@ int main(int argc, char *argv[])
     if(threadStringBlock.size()>0)
         mWC.addWord(threadStringBlock);
 
-    if(!futureList.empty()) {
-        for(auto itrFuture: futureList) {
-            itrFuture.waitForFinished();
-            mWC += itrFuture.result();
-        }
-    }
+
 
 //![1]
 
@@ -77,7 +64,7 @@ int main(int argc, char *argv[])
 //![3]
     QChart *chart = new QChart();
     chart->addSeries(series);
-    chart->setTitle("Simple barchart example");
+    chart->setTitle("Top Word in");
     chart->setAnimationOptions(QChart::SeriesAnimations);
 //![3]
 
@@ -106,6 +93,6 @@ int main(int argc, char *argv[])
     window.setCentralWidget(chartView);
     window.update();
 //![7]
-
-    return a.exec();
+*/
+    return app.exec();
 }
