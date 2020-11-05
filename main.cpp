@@ -2,24 +2,23 @@
 #include <QtWidgets/QMainWindow>
 
 #include <QtGui/QSurfaceFormat>
-#include <QtQuick/QQuickWindow>
-#include <QtQuick/QQuickView>
-#include <QtQml/QQmlEngine>
 
-#include "wordcounter.h"
+
+#include "filereader.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QQuickView viewer(QUrl("qrc:/MainWindow.qml"));
+    FileReader mFReader;
+    mFReader.createWindow();
+/*    QQuickView viewer(QUrl("qrc:/MainWindow.qml"));
     //QObject *item = view.rootObject();
 
     //QObject::connect(viewer.engine(), &QQmlEngine::quit, &viewer, &QWindow::close);
 
     viewer.setTitle(QStringLiteral("QML Chart"));
-
-    viewer.show();
+    viewer.show();*/
 /*
 
     QFile file(fileName);

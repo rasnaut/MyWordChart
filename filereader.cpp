@@ -2,7 +2,7 @@
 
 #include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrent>
-#include <QFileDialog>
+#include <QtQuick/QQuickItem>
 
 
 FileReader::FileReader()
@@ -14,8 +14,21 @@ WordCounter wordCounterCreator(QString str) {
     return WordCounter(str);
 }
 
+void FileReader::createWindow()
+{
+    viewPoint = QSharedPointer<QQuickView>(new QQuickView(QUrl("qrc:/MainWindow.qml")));
+    windowItem = viewPoint->rootObject();
+
+    QObject::connect(windowItem, SIGNAL(fileUrlSignal(QString)) , this, SLOT(readFile(QString)));
+
+    viewPoint->setTitle(QStringLiteral("QML Chart"));
+
+    viewPoint->show();
+}
+
 void FileReader::readFile(QString fileName)
 {
+    qInfo() << "File catched" << fileName;
     QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             qCritical() << "file not found or not correct type";

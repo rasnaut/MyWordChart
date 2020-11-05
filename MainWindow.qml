@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.0
 
 Item {
+    id: root
     visible: true
     width: 580
     height: 480
@@ -13,7 +14,7 @@ Item {
 
     FileDialog {
         id: fileDialog
-        visible: fileDialogVisible.checked
+        //visible: true
         modality: Qt.WindowModal
         title: "Choose a text file"
         //selectExisting: fileDialogSelectExisting.checked
@@ -22,7 +23,7 @@ Item {
         nameFilters: [ "Text files (*.txt)", "All files (*)" ]
         selectedNameFilter: "Text files (*.txt)"
         onAccepted: {
-            root.qmlSignal(fileUrls);
+            root.fileUrlSignal(fileUrls);
         }
         onRejected: { console.log("Rejected") }
     }
