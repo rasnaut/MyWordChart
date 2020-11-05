@@ -45,7 +45,7 @@ void FileReader::readFile(QString fileName)
     QString threadStringBlock("");
 
     while (!in.atEnd()) {
-        if(counter++ < 100)
+        if(counter++ < 10)
             threadStringBlock += in.readLine();
         else {
             threadCount++;

@@ -16,12 +16,9 @@ Item {
 
     FileDialog {
         id: fileDialog
-        //visible: true
         modality: Qt.WindowModal
         title: "Choose a text file"
-        //selectExisting: fileDialogSelectExisting.checked
         selectMultiple: false
-        //selectFolder: fileDialogSelectFolder.checked
         nameFilters: [ "Text files (*.txt)", "All files (*)" ]
         selectedNameFilter: "Text files (*.txt)"
         onAccepted: {
@@ -43,8 +40,8 @@ Item {
     ProgressBar {
         id: prg
         visible: !isTopReady
-        minimumValue: 0   // C++ loop starts out with 0
-        maximumValue: 100 // C++ loop ends with "Count"
+        minimumValue: 0
+        maximumValue: 100
 
     }
 
@@ -59,7 +56,6 @@ Item {
             prg.value = progress;
         }
         function onTopWordsReadyChanged(isReady) {
-            console.log("QML: onTopWordsReadyChanged!!!!")
             isTopReady = isReady;
             if(isReady) {
                 chart.readTop(fileReader.topWords);

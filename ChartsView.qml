@@ -8,13 +8,16 @@ Item {
 
     function readTop(topWords) {
             console.log("read top")
+            mySeries.clear();
+            var max = 0;
             for (var prop in topWords) {
                 mySeries.append(prop, [topWords[prop]]);
+                if(max < topWords[prop]) max = topWords[prop];
                 console.log("Object item:", prop, "=", topWords[prop])
             }
+            mySeries.maximum = max;
         }
 
-    //![1]
     ChartView {
         title: "Word Top"
         anchors.fill: parent
@@ -23,21 +26,16 @@ Item {
 
         BarSeries {
             id: mySeries
+            property var maximum: 10
+
             axisY: ValueAxis {
                 id: valueAxis
                 min: 0
-                max: 50
+                max: mySeries.maximum
+                tickCount: 5
             }
 
-            //BarSet { label: "Test"; values: [2] }
+            BarSet { values: [1] }
         }
     }
-
-    Component.onCompleted: {
-        /*for(var i = 0; i<topWords.size; i++) {
-            mySeries.append("newWord", 0);
-        }*/
-    }
-
-    //![1]
 }
