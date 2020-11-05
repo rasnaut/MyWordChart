@@ -15,13 +15,17 @@
 
 #include "wordcounter.h"
 
+typedef QSharedPointer<WordCounter> sharedP_WCounter;
+
 class FileReader : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(float progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(QVariantMap topWords READ getTopOfWords NOTIFY topWordsReadyChanged)
 public:
     FileReader();
 
-    Q_INVOKABLE QVariantMap getTopOfWords() {
+    QVariantMap getTopOfWords() {
         QVariantMap rval;
         for (auto itr: mWC.topStr) { rval[itr.getStr()] = itr.position; }
         return rval;
@@ -29,6 +33,11 @@ public:
 
     void createWindow();
 
+    float progress(){ return 0.0; }
+
+signals:
+    void progressChanged(float progress);
+    void topWordsReadyChanged(bool isReady);
 
 public slots:
     void readFile(QString fileName);
@@ -37,10 +46,9 @@ public slots:
 private:
     QObject* windowItem;
     QSharedPointer<QQuickView> viewPoint;
+    int threadCount;
 
     WordCounter mWC;
-    QList<QFuture<WordCounter>> futureList;
-
 };
 
 #endif // FILEREADER_H

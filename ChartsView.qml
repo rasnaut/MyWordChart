@@ -4,7 +4,15 @@ import QtCharts 2.0
 Item {
     width: 600
     height: 400
-    //anchors.fill: parent
+    anchors.fill: parent
+    property var topWords
+
+    function readTop() {
+            for (var prop in topWords) {
+                mySeries.append(prop, topWords[prop]);
+                //console.log("Object item:", prop, "=", topMap[prop])
+            }
+        }
 
     //![1]
     ChartView {
@@ -13,12 +21,17 @@ Item {
         legend.alignment: Qt.AlignBottom
         antialiasing: true
 
+
         BarSeries {
             id: mySeries
-            BarSet { label: "Bob"; values: [2, 2, 3, 4, 5, 6] }
-            BarSet { label: "Susan"; values: [5, 1, 2, 4, 1, 7] }
-            BarSet { label: "James"; values: [3, 5, 8, 13, 5, 8] }
         }
     }
+
+    Component.onCompleted: {
+        /*for(var i = 0; i<topWords.size; i++) {
+            mySeries.append("newWord", 0);
+        }*/
+    }
+
     //![1]
 }

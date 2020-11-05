@@ -27,9 +27,9 @@ private:
 
 };
 
-class WordCounter
+class WordCounter : public QObject
 {
-    //Q_OBJECT
+    Q_OBJECT
 public:
     WordCounter();
     WordCounter(QString str);
@@ -39,9 +39,16 @@ public:
     WordCounter& operator+=(const WordCounter& right);
 
     std::set<myChart> topStr;
+
+
+signals:
+    void wordCountChanged(int wordCount);
+    void progressChanged(int progress);
 private:
     QString incStr;
     QMap<QString, int> strMap;
+    int wordCount;
+    int progress;
 
 };
 

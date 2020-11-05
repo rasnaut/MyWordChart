@@ -12,6 +12,8 @@ Item {
 
     signal fileUrlSignal(msg: string)
 
+    property bool isTopReady: false
+
     FileDialog {
         id: fileDialog
         //visible: true
@@ -24,11 +26,13 @@ Item {
         selectedNameFilter: "Text files (*.txt)"
         onAccepted: {
             root.fileUrlSignal(fileUrls);
+            openButton.visible = false;
         }
         onRejected: { console.log("Rejected") }
     }
 
     Button {
+        id: openButton
         text: "Open"
         visible: true
         anchors.verticalCenter: parent.verticalCenter
@@ -37,7 +41,29 @@ Item {
     }
 
     ProgressBar {
-        visible: false
-        indeterminate: true
+        id: prg
+        visible: !isTopReady
+        minimumValue: 0   // C++ loop starts out with 0
+        maximumValue: 100 // C++ loop ends with "Count"
+
+    }
+
+    ChartsView {
+        id: chart
+        visible: isTopReady
+        topWords: fileReader.topWords
+    }
+
+    Connections {
+        target: fileReader
+        function onProgressChanged(progress) {
+            prg.value = progress;
+        }
+        function onTopWordsReadyChanged(isReady) {
+            isTopReady = isReady;
+            if(isReady) {
+                chart.readTop();
+            }
+        }
     }
 }

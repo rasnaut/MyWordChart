@@ -3,21 +3,22 @@
 #include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrent>
 #include <QtQuick/QQuickItem>
+#include <QQmlContext>
 
-
-FileReader::FileReader()
+FileReader::FileReader() : threadCount(0)
 {
-    futureList.clear();
+
 }
 
-WordCounter wordCounterCreator(QString str) {
-    return WordCounter(str);
+sharedP_WCounter wordCounterCreator(QString str) {
+    return sharedP_WCounter(new WordCounter(str));
 }
 
 void FileReader::createWindow()
 {
     viewPoint = QSharedPointer<QQuickView>(new QQuickView(QUrl("qrc:/MainWindow.qml")));
     windowItem = viewPoint->rootObject();
+    viewPoint->engine()->rootContext()->setContextProperty("fileReader", this);
 
     QObject::connect(windowItem, SIGNAL(fileUrlSignal(QString)) , this, SLOT(readFile(QString)));
 
@@ -43,10 +44,11 @@ void FileReader::readFile(QString fileName)
         if(counter++ < 100)
             threadStringBlock += in.readLine();
         else {
-            QFutureWatcher<WordCounter> watcher;
+            threadCount++;
+            QFutureWatcher<sharedP_WCounter> watcher;
             QObject::connect(&watcher, SIGNAL(finished()), this, SLOT(countWords()));
-            QFuture<WordCounter> pFut = QtConcurrent::run(wordCounterCreator, threadStringBlock);
-            futureList.append(pFut);
+            watcher.setFuture(QtConcurrent::run(wordCounterCreator, threadStringBlock));
+
             counter = 0;
             threadStringBlock = "";
         }
@@ -55,10 +57,15 @@ void FileReader::readFile(QString fileName)
     file.close();
     if(threadStringBlock.size()>0)
         mWC.addWord(threadStringBlock);
+
+    if(threadCount == 0)
+        emit topWordsReadyChanged(true);
 }
 
 void FileReader::countWords()
 {
-    QFutureWatcher<WordCounter> *watcher = (QFutureWatcher<WordCounter>*)sender();
-    mWC += watcher->result();
+    QFutureWatcher<sharedP_WCounter> *watcher = (QFutureWatcher<sharedP_WCounter>*)sender();
+    mWC += *(watcher->result());
+    if(--threadCount <= 0)
+        emit topWordsReadyChanged(true);
 }
