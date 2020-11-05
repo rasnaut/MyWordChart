@@ -7,7 +7,7 @@ import QtQuick.Window 2.0
 Item {
     id: root
     visible: true
-    width: 580
+    width: 700
     height: 480
 
     signal fileUrlSignal(msg: string)
@@ -51,7 +51,6 @@ Item {
     ChartsView {
         id: chart
         visible: isTopReady
-        topWords: fileReader.topWords
     }
 
     Connections {
@@ -60,9 +59,10 @@ Item {
             prg.value = progress;
         }
         function onTopWordsReadyChanged(isReady) {
+            console.log("QML: onTopWordsReadyChanged!!!!")
             isTopReady = isReady;
             if(isReady) {
-                chart.readTop();
+                chart.readTop(fileReader.topWords);
             }
         }
     }

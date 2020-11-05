@@ -11,6 +11,7 @@
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QQuickView>
 #include <QtQml/QQmlEngine>
+
 //#include <Decl
 
 #include "wordcounter.h"
@@ -21,14 +22,19 @@ class FileReader : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(float progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QVariantMap topWords READ getTopOfWords NOTIFY topWordsReadyChanged)
+    Q_PROPERTY(QVariant topWords READ getTopOfWords NOTIFY topWordsReadyChanged)
 public:
     FileReader();
 
-    QVariantMap getTopOfWords() {
+    QVariant getTopOfWords() {
         QVariantMap rval;
-        for (auto itr: mWC.topStr) { rval[itr.getStr()] = itr.position; }
-        return rval;
+        qInfo() << "getTopOfWords executed! mWC.topStr size" << mWC.topStr.size();
+        for (auto itr: mWC.topStr) {
+            qInfo() << "Top STRING: " << itr.getStr();
+            rval.insert(itr.getStr(), itr.position);
+        }
+        qInfo() << "getTopOfWords completed!";
+        return QVariant::fromValue(rval);
     }
 
     void createWindow();

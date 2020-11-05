@@ -2,15 +2,15 @@ import QtQuick 2.0
 import QtCharts 2.0
 
 Item {
-    width: 600
-    height: 400
+    width: 700
+    height: 480
     anchors.fill: parent
-    property var topWords
 
-    function readTop() {
+    function readTop(topWords) {
+            console.log("read top")
             for (var prop in topWords) {
-                mySeries.append(prop, topWords[prop]);
-                //console.log("Object item:", prop, "=", topMap[prop])
+                mySeries.append(prop, [topWords[prop]]);
+                console.log("Object item:", prop, "=", topWords[prop])
             }
         }
 
@@ -21,9 +21,15 @@ Item {
         legend.alignment: Qt.AlignBottom
         antialiasing: true
 
-
         BarSeries {
             id: mySeries
+            axisY: ValueAxis {
+                id: valueAxis
+                min: 0
+                max: 50
+            }
+
+            //BarSet { label: "Test"; values: [2] }
         }
     }
 

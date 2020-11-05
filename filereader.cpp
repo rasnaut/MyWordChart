@@ -5,6 +5,9 @@
 #include <QtQuick/QQuickItem>
 #include <QQmlContext>
 
+#include <QFileDialog>
+#include <QMainWindow>
+
 FileReader::FileReader() : threadCount(0)
 {
 
@@ -29,12 +32,13 @@ void FileReader::createWindow()
 
 void FileReader::readFile(QString fileName)
 {
-    qInfo() << "File catched" << fileName;
-    QFile file(fileName);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qCritical() << "file not found or not correct type";
-            //return 0;
-        }
+    qInfo() << "File catched from QML: " << fileName;
+
+    QFile file(QUrl(fileName).toLocalFile());
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCritical() << "file not found or not correct type";
+        //return 0;
+    }
 
     QTextStream in(&file);
     int counter = 0;
@@ -58,14 +62,18 @@ void FileReader::readFile(QString fileName)
     if(threadStringBlock.size()>0)
         mWC.addWord(threadStringBlock);
 
-    if(threadCount == 0)
+    if(threadCount == 0) {
+        qInfo() << "!! C++ emit topWordsReadyChanged(true)";
         emit topWordsReadyChanged(true);
+    }
 }
 
 void FileReader::countWords()
 {
     QFutureWatcher<sharedP_WCounter> *watcher = (QFutureWatcher<sharedP_WCounter>*)sender();
     mWC += *(watcher->result());
-    if(--threadCount <= 0)
+    if(--threadCount <= 0) {
+        qInfo() << "!! C++ emit topWordsReadyChanged(true) !!!";
         emit topWordsReadyChanged(true);
+    }
 }
