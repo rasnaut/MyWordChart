@@ -10,7 +10,8 @@
 
 FileReader::FileReader() : threadCount(0)
 {
-
+    QObject::connect(&mWC, SIGNAL(wordCountChanged(int)) , this, SLOT(wordCountChanged(int)));
+    QObject::connect(&mWC, SIGNAL(progressChanged(int)) , this, SLOT(progressCounter(int)));
 }
 
 sharedP_WCounter wordCounterCreator(QString str, FileReader *fileReader) {
@@ -40,13 +41,16 @@ void FileReader::readFile(QString fileName)
         qCritical() << "file not found or not correct type";
         //return 0;
     }
+    qInfo()<<"file size: " << file.size();
+    int max_word_per_thread = (file.size() / 3000) + 5;
+    qInfo()<<"max_word_per_thread: " << max_word_per_thread;
 
     QTextStream in(&file);
     int counter = 0;
     QString threadStringBlock("");
 
     while (!in.atEnd()) {
-        if(counter++ < 100) {
+        if(counter++ < max_word_per_thread) {
             threadStringBlock += in.readLine();
         } else {
             threadCount++;
