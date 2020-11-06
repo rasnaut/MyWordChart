@@ -13,8 +13,11 @@ FileReader::FileReader() : threadCount(0)
 
 }
 
-sharedP_WCounter wordCounterCreator(QString str) {
-    return sharedP_WCounter(new WordCounter(str));
+sharedP_WCounter wordCounterCreator(QString str, FileReader *fileReader) {
+    sharedP_WCounter pWCounter = sharedP_WCounter(new WordCounter(str));
+    QObject::connect(pWCounter.data(), SIGNAL(wordCountChanged(int)) , fileReader, SLOT(wordCountChanged(int)));
+    QObject::connect(pWCounter.data(), SIGNAL(progressChanged(int)) , fileReader, SLOT(progressCounter(int)));
+    return pWCounter;
 }
 
 void FileReader::createWindow()
@@ -48,7 +51,7 @@ void FileReader::readFile(QString fileName)
         } else {
             threadCount++;
             QFutureWatcher<sharedP_WCounter>* watcher = new QFutureWatcher<sharedP_WCounter>();
-            watcher->setFuture(QtConcurrent::run(wordCounterCreator, threadStringBlock));
+            watcher->setFuture(QtConcurrent::run(wordCounterCreator, threadStringBlock, this));
             QObject::connect(watcher, SIGNAL(finished()), this, SLOT(countWords()));
 
             counter = 0;

@@ -39,9 +39,12 @@ Item {
 
     ProgressBar {
         id: prg
-        visible: !isTopReady
+        anchors.verticalCenter: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: false//!isTopReady
         minimumValue: 0
         maximumValue: 100
+        value: fileReader.progress
 
     }
 
@@ -53,10 +56,11 @@ Item {
     Connections {
         target: fileReader
         function onProgressChanged(progress) {
-            prg.value = progress;
+            prg.visible = true;
         }
         function onTopWordsReadyChanged(isReady) {
             isTopReady = isReady;
+            prg.visible =false;
             if(isReady) {
                 chart.readTop(fileReader.topWords);
             }

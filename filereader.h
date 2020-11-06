@@ -32,20 +32,30 @@ public:
 
     void createWindow();
 
-    float progress(){ return 0.0; }
+    float progress() {
+        float percent = totalWordsCount/100;
+        return totalProgress/percent;
+    }
 
 signals:
-    void progressChanged(float progress);
+    void progressChanged();
     void topWordsReadyChanged(bool isReady);
 
 public slots:
     void readFile(QString fileName);
     void countWords();
+    void wordCountChanged(int count) { totalWordsCount += count; }
+    void progressCounter(int count) {
+        totalProgress += count;
+        emit progressChanged();
+    }
 
 private:
     QObject* windowItem;
     QSharedPointer<QQuickView> viewPoint;
     int threadCount;
+    long int totalWordsCount;
+    long int totalProgress;
 
     WordCounter mWC;
 };
