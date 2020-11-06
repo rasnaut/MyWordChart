@@ -1,6 +1,5 @@
 #ifndef WORDCOUNTER_H
 #define WORDCOUNTER_H
-#include <string>
 #include <QMap>
 #include <set>
 #include <QString>

@@ -20,12 +20,8 @@ void WordCounter::addWord(QString str)
     if(strList.size() < 2) { strMap.insert(str, 1);}
     wordCount += strList.size();
     emit wordCountChanged(wordCount);
-    //float percent = wordCount/100;
-    //progress = 0;
-    //int counter = 0;
     for(auto itr: strList)
     {
-        //progress = (counter++)/percent;
         emit progressChanged(++progress);
         auto fWordItr = strMap.find(itr);
         if(fWordItr != strMap.end())
@@ -79,7 +75,7 @@ WordCounter& WordCounter::operator+=(const WordCounter& right)
     std::sort(newTopStr.begin(), newTopStr.end());
     for(auto itr: newTopStr) { strMap.find(itr.getStr()).value() = itr.position; }
     if(newTopStr.size()>15) {
-        newTopStr.erase(newTopStr.begin(), newTopStr.end()-16);
+        newTopStr.erase(newTopStr.begin(), newTopStr.end()-15);
     }
     topStr.clear();
     for(auto itr: newTopStr) { topStr.insert(itr); }

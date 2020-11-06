@@ -32,8 +32,6 @@ void FileReader::createWindow()
 
 void FileReader::readFile(QString fileName)
 {
-    qInfo() << "File catched from QML: " << fileName;
-
     QFile file(QUrl(fileName).toLocalFile());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical() << "file not found or not correct type";
@@ -45,13 +43,13 @@ void FileReader::readFile(QString fileName)
     QString threadStringBlock("");
 
     while (!in.atEnd()) {
-        if(counter++ < 10)
+        if(counter++ < 100) {
             threadStringBlock += in.readLine();
-        else {
+        } else {
             threadCount++;
-            QFutureWatcher<sharedP_WCounter> watcher;
-            QObject::connect(&watcher, SIGNAL(finished()), this, SLOT(countWords()));
-            watcher.setFuture(QtConcurrent::run(wordCounterCreator, threadStringBlock));
+            QFutureWatcher<sharedP_WCounter>* watcher = new QFutureWatcher<sharedP_WCounter>();
+            watcher->setFuture(QtConcurrent::run(wordCounterCreator, threadStringBlock));
+            QObject::connect(watcher, SIGNAL(finished()), this, SLOT(countWords()));
 
             counter = 0;
             threadStringBlock = "";
@@ -59,21 +57,17 @@ void FileReader::readFile(QString fileName)
     }
 
     file.close();
-    if(threadStringBlock.size()>0)
-        mWC.addWord(threadStringBlock);
+    if(threadStringBlock.size()>0) mWC.addWord(threadStringBlock);
 
-    if(threadCount == 0) {
-        qInfo() << "!! C++ emit topWordsReadyChanged(true)";
-        emit topWordsReadyChanged(true);
-    }
+    if(threadCount == 0) { emit topWordsReadyChanged(true); }
 }
 
 void FileReader::countWords()
 {
     QFutureWatcher<sharedP_WCounter> *watcher = (QFutureWatcher<sharedP_WCounter>*)sender();
     mWC += *(watcher->result());
+    delete watcher;
     if(--threadCount <= 0) {
-        qInfo() << "!! C++ emit topWordsReadyChanged(true) !!!";
         emit topWordsReadyChanged(true);
     }
 }

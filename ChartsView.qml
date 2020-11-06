@@ -7,13 +7,11 @@ Item {
     anchors.fill: parent
 
     function readTop(topWords) {
-            console.log("read top")
             mySeries.clear();
             var max = 0;
             for (var prop in topWords) {
                 mySeries.append(prop, [topWords[prop]]);
                 if(max < topWords[prop]) max = topWords[prop];
-                console.log("Object item:", prop, "=", topWords[prop])
             }
             mySeries.maximum = max;
         }

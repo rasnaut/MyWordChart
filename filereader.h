@@ -12,8 +12,6 @@
 #include <QtQuick/QQuickView>
 #include <QtQml/QQmlEngine>
 
-//#include <Decl
-
 #include "wordcounter.h"
 
 typedef QSharedPointer<WordCounter> sharedP_WCounter;
@@ -28,12 +26,7 @@ public:
 
     QVariant getTopOfWords() {
         QVariantMap rval;
-        qInfo() << "getTopOfWords executed! mWC.topStr size" << mWC.topStr.size();
-        for (auto itr: mWC.topStr) {
-            qInfo() << "Top STRING: " << itr.getStr();
-            rval.insert(itr.getStr(), itr.position);
-        }
-        qInfo() << "getTopOfWords completed!";
+        for (auto itr: mWC.topStr) { rval.insert(itr.getStr(), itr.position); }
         return QVariant::fromValue(rval);
     }
 
